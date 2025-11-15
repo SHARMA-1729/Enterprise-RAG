@@ -1,0 +1,5 @@
+faiss_index/
+data/
+*.pyc
+__pycache__/
+*.log

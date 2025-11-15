@@ -122,3 +122,26 @@ Click "🔄 Rebuild Index" in sidebar to reprocess documents after updates.
 - Add conversation memory
 - Deploy to production
 - Add document upload feature
+
+## 📦 Deploying Backend to Vercel (Serverless)
+
+You can deploy the backend to Vercel as a serverless Python app. This approach is only recommended if the backend does NOT rely on heavy native dependencies that fail to build (FAISS tends to fail in serverless environments). If your app requires FAISS, use Render/Heroku/Azure instead.
+
+Steps:
+
+1. Vercel config is already included: `api/index.py` re-exports the `FastAPI` `app` from `backend.py` and `vercel.json` configures the Python build.
+2. Add environment variables on Vercel project (Settings → Environment Variables) for any secrets such as `GROQ_API_KEY`.
+3. Remove `faiss-cpu` from the Vercel `requirements.txt` if your build fails, or switch to a hosted vector DB.
+4. Install and log in with Vercel CLI and deploy:
+
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+Notes & Caveats:
+- `faiss-cpu` is a native dependency and often fails to build in Vercel serverless. Consider replacing with Pinecone/Weaviate or prebuild the `faiss_index` and store it in S3.
+- `.vercelignore` is already included to avoid pushing `faiss_index/` and `data/` (sensitive or large files) to Vercel.
+
+If you prefer not to use Vercel for the backend, see the `Render` or `Heroku` sections earlier in this README.
